@@ -37,6 +37,7 @@ namespace FlickTest.Game
             if (e.Button is MouseButton.Middle or MouseButton.Right)
                 Expire();
 
+            // 左键也返回 true，使本球进入 ButtonDownInputQueue，拖拽才能触发
             return true;
         }
 
@@ -55,9 +56,10 @@ namespace FlickTest.Game
         {
             Position = e.MousePosition + dragOffset;
 
+            // dt 修正的平滑系数，避免事件频率影响手感
             float dt = (float)Math.Max(Clock.ElapsedFrameTime / 1000.0, 0.001);
             Vector2 currentVelocity = (e.MousePosition - lastMousePos) / dt;
-            smoothVelocity = Vector2.Lerp(smoothVelocity, currentVelocity, 0.4f);
+            smoothVelocity = Vector2.Lerp(smoothVelocity, currentVelocity, 1 - MathF.Pow(0.6f, dt));
             lastMousePos = e.MousePosition;
         }
 
