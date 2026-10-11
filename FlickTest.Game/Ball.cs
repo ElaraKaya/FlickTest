@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace FlickTest.Game
 {
@@ -30,7 +31,14 @@ namespace FlickTest.Game
             };
         }
 
-        protected override bool OnMouseDown(MouseDownEvent e) => true;
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            // 中键/右键删除这个球
+            if (e.Button is MouseButton.Middle or MouseButton.Right)
+                Expire();
+
+            return true;
+        }
 
         protected override bool OnDragStart(DragStartEvent e)
         {
