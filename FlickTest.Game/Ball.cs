@@ -14,8 +14,8 @@ namespace FlickTest.Game
         private Vector2 velocity;
         private bool dragging;
         private Vector2 dragOffset;
-        private Vector2 lastMousePos;
         private Vector2 smoothVelocity;
+        private double lastDragTime;
 
         public Ball()
         {
@@ -47,7 +47,7 @@ namespace FlickTest.Game
             dragOffset = Position - e.MousePosition;
             velocity = Vector2.Zero;
             smoothVelocity = Vector2.Zero;
-            lastMousePos = e.MousePosition;
+            lastDragTime = Time.Current;
             this.ScaleTo(1.25f, 200, Easing.OutQuint);
             return true;
         }
@@ -56,11 +56,12 @@ namespace FlickTest.Game
         {
             Position = e.MousePosition + dragOffset;
 
-            // dt 修正的平滑系数，避免事件频率影响手感
-            float dt = (float)Math.Max(Clock.ElapsedFrameTime / 1000.0, 0.001);
-            Vector2 currentVelocity = (e.MousePosition - lastMousePos) / dt;
-            smoothVelocity = Vector2.Lerp(smoothVelocity, currentVelocity, 1 - MathF.Pow(0.6f, dt));
-            lastMousePos = e.MousePosition;
+            double currentTime = Time.Current;
+            float dt = (float)Math.Max((currentTime - lastDragTime) / 1000.0, 0.001);
+            lastDragTime = currentTime;
+
+            Vector2 instantVelocity = e.Delta / dt;
+            smoothVelocity = Vector2.Lerp(smoothVelocity, instantVelocity, 1 - MathF.Pow(0.01f, dt));
         }
 
         protected override void OnDragEnd(DragEndEvent e)
