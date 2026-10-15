@@ -65,10 +65,9 @@ namespace FlickTest.Game
             dragging = false;
             if (dragHistory.Count >= 2)
             {
-                var first = dragHistory.Peek();
-                var last = (pos: e.MousePosition, time: Time.Current);
-                float dt = (float)Math.Max((last.time - first.time) / 1000.0, 0.001);
-                velocity = (last.pos - first.pos) / dt;
+                var (firstPos, firstTime) = dragHistory.Peek();
+                float dt = (float)Math.Max((Time.Current - firstTime) / 1000.0, 0.001);
+                velocity = (e.MousePosition - firstPos) / dt;
             }
             else
             {
